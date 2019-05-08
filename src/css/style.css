@@ -1,0 +1,11 @@
+.wrap-select { background-color: #faa; }
+
+#tickets-area {
+  background-color: #aaf;
+  justify-content: space-around;
+}
+
+.card {
+  margin: 10px 0;
+  box-shadow: 2px 5px 5px #555; 
+}
