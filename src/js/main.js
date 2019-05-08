@@ -18,16 +18,31 @@ function appendTickets(sort, page = 1) {
   }
 }
 
-const PageViewQty = 5;
+const PageViewQty = 15;
 
 function createResultByStatus(data, state) {
   switch(state) {
     case 'open':
-    return data
-      .filter(ticket => ticket.completed == false)
-      .sort((a, b) => a.title.toUpperCase() > b.title.toUpperCase() ? 1 : -1)
-      .sort((a, b) => a.userId - b.userId);
-  }
+      return data
+        .filter(ticket => ticket.completed == false)
+        .sort((a, b) => a.title.toUpperCase() > b.title.toUpperCase() ? 1 : -1)
+        .sort((a, b) => a.userId - b.userId);
+    case 'completed':
+      return data
+        .filter(ticket => ticket.completed == true)
+        .sort((a, b) => a.title.toUpperCase() > b.title.toUpperCase() ? 1 : -1)
+        .sort((a, b) => a.userId - b.userId);     
+    case 'user':
+      return data
+        .sort((a, b) => a.title.toUpperCase() > b.title.toUpperCase() ? 1 : -1)
+        .sort((a, b) => a.completed > b.completed ? 1 : -1 )
+        .sort((a, b) => a.userId - b.userId);
+    case 'title':
+      return data
+        .sort((a, b) => a.title.toUpperCase() > b.title.toUpperCase() ? 1 : -1)
+        .sort((a, b) => a.completed > b.completed ? 1 : -1 )
+        .sort((a, b) => a.userId - b.userId);
+    }
 }
 
 function createViewTickets(data, state, page) {
@@ -40,68 +55,6 @@ function createViewTickets(data, state, page) {
     ticketCount,
     html: sliced.map(item => createViewTicket(item)).join(''),
   }
-
-
-  // console.log(`func createViewTickets' state: ${state}`);
-
-  // switch (state) {
-  //   case "open":
-  //     result = data
-  //                 .filter(ticket => ticket.completed == false)
-  //                 .sort((a, b) => a.title.toUpperCase() > b.title.toUpperCase() ? 1 : -1)
-  //                 .sort((a, b) => a.userId - b.userId);
-
-  //     ticketCount = result.length;
-
-  //     for (let item of result) {
-  //       let html = createViewTicket(item);
-  //       arrHTML.push(html);
-  //     }
-
-
-  //     break;
-  //   case "completed":
-  //     result = data
-  //                 .filter(ticket => ticket.completed == true)
-  //                 .sort((a, b) => a.title.toUpperCase() > b.title.toUpperCase() ? 1 : -1)
-  //                 .sort((a, b) => a.userId - b.userId);
-
-  //       ticketCount = result.length;
-
-  //       for (let item of result) {
-  //       let html = createViewTicket(item);
-  //       arrHTML.push(html);
-  //     }
-  //     break;
-  //   case "user":
-  //     result = data
-  //                 .sort((a, b) => a.title.toUpperCase() > b.title.toUpperCase() ? 1 : -1)
-  //                 .sort((a, b) => a.completed > b.completed ? 1 : -1 )
-  //                 .sort((a, b) => a.userId - b.userId);
-
-  //     ticketCount = result.length;
-
-  //     for (let item of result) {
-  //       let html = createViewTicket(item);
-  //       arrHTML.push(html);
-  //     }
-  //     break;
-  //   case "title":
-  //     result = data
-  //                 .sort((a, b) => a.title.toUpperCase() > b.title.toUpperCase() ? 1 : -1)
-  //                 .sort((a, b) => a.userId - b.userId);
-
-  //     ticketCount = result.length;
-
-  //     for (let item of result) {
-  //       let html = createViewTicket(item);
-  //       arrHTML.push(html);
-  //     }
-  //     break;
-  // }
-  // console.log(ticketCount)
-  // // create pagination here
-  // return arrHTML.join('');
 }
 
 function createViewTicket(data) {
@@ -129,16 +82,8 @@ function createPagination(pageNum) {
   const elm = $(`<li class="pageButton">${pageNum}</li>`);
   elm.click(() => appendTickets(sort, pageNum));
   return elm;
-  // console.dir(elm[0]);
-  // return elm[0].outerHTML;
-
-  // return `
-  //   <li class="pageButton" value="${pageNum}">${pageNum}</li>
-  // `
 }
 
-// tester
-// $('.pagination ul').append(createPaginations(100));
 
 
 // ==========
@@ -148,6 +93,7 @@ $('#sortTickets').change(function() {
   sort = $(this).val();
 
   $('#tickets-area > *').remove()
+  $('#pagination-container > *').remove()
 
   appendTickets(sort);
 })
@@ -156,5 +102,4 @@ $('.pageButton').click(function() {
   let pageNum = $(this).val();
   console.log(pageNum);
   appendTickets(sort, pageNum);
-  // create page view according to the arg
 })
