@@ -26,6 +26,10 @@ ul {
   border-radius: 50%;
   transition: 0.1s;
 }
+.pageButton.active {
+  background-color: #faf;
+  transition: 0.1s;
+}
 .pageButton:hover {
   background-color: #faf;
   transition: 0.1s;
