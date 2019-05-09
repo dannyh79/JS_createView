@@ -1,36 +1,53 @@
-.wrap-select { background-color: #faa; }
+body { background-color: #555; }
 
-#tickets-area {
-  background-color: #aaf;
-  justify-content: space-around;
-}
+.wrap-select { color: #ddd; }
+.wrap-select .row { margin-left: 0; }
+.wrap-select__text { text-shadow: 3px 3px #000; }
 
 .card {
+  /* background-color: #ffc; */
+  background: radial-gradient(ellipse at right, #ffc 90%, #aa5);
+  height: 10rem;
   margin: 10px 0;
-  box-shadow: 2px 5px 5px #555; 
+  box-sizing: border-box;
+  box-shadow: 2px 5px 5px #333; 
 }
+.card:hover {
+  position: relative;
+  top: -10px;
+  left: -2px;
+  cursor: pointer;
+}
+.card-title { text-transform: Capitalize; }
 
-ul { 
+#viewPagi { 
   display: flex; 
   margin: auto;
+  margin-bottom: 50px;
 }
-.pageButton {
+.pagiBtn {
   display: inline-block;
   width: 50px;
   height: 50px;
   padding: 10px;
   margin: 0 10px;
+  color: #ccc;
+  font-size: 26px;
   cursor: pointer;
   text-align: center;
   line-height: 30px;
   border-radius: 50%;
   transition: 0.1s;
 }
-.pageButton.active {
-  background-color: #faf;
+.pagiBtn.active {
+  color: #fff;
+  background: radial-gradient(#999, #555);
   transition: 0.1s;
 }
-.pageButton:hover {
-  background-color: #faf;
+.pagiBtn:hover {
+  background-color: #999;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: inset 10px 10px 10px #333;   
   transition: 0.1s;
 }

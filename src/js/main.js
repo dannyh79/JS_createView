@@ -1,106 +1,112 @@
-// ==========
-function appendTickets(sort, page = 1) {
-  const url = "https://jsonplaceholder.typicode.com/todos";
-  let state = sort;
+// create result by state
+const viewQty = 18;
 
-  if (sort !== "") {
-    fetch(url)
-    .then(function(result) {
-      return result.json();
-    })
-    .then(function(data) {
-      // console.log(`func appendTickets' state: ${state}`);
-      let { html, ticketCount } = createViewTickets(data, state, page);
-      let pagiHtml = createPaginations(ticketCount);
-
-      $('#tickets-area').html(html);
-      $('#pagination-container').html(pagiHtml);
-    })
-  }
-}
-
-const PageViewQty = 18;
-
-function createResultByStatus(data, state) {
+function createResultByState(data, state) {
   switch (state) {
     case 'open':
       return data
         .filter(ticket => ticket.completed == false)
-        .sort((a, b) => a.title.toUpperCase() > b.title.toUpperCase() ? 1 : -1)
-        .sort((a, b) => a.userId - b.userId);
     case 'completed':
       return data
         .filter(ticket => ticket.completed == true)
-        .sort((a, b) => a.title.toUpperCase() > b.title.toUpperCase() ? 1 : -1)
-        .sort((a, b) => a.userId - b.userId);     
     case 'user':
       return data
-        .sort((a, b) => a.title.toUpperCase() > b.title.toUpperCase() ? 1 : -1)
-        .sort((a, b) => a.completed > b.completed ? 1 : -1 )
-        .sort((a, b) => a.userId - b.userId);
+        .sort((a, b) => a.userId - b.userId)
     case 'title':
       return data
-        .sort((a, b) => a.title.toUpperCase() > b.title.toUpperCase() ? 1 : -1)
-        .sort((a, b) => a.completed > b.completed ? 1 : -1 )
-        .sort((a, b) => a.userId - b.userId);
+        .sort((a, b) => a.title.toUpperCase() > b.title.toUpperCase ? 1 : -1)
     }
 }
 
-function createViewTickets(data, state, page) {
-  const startIdx = PageViewQty * (page - 1);
-  const filtered = createResultByStatus(data, state);
-  const sliced = filtered.slice(startIdx,  startIdx + PageViewQty)
-  const ticketCount = filtered.length
-
-  return {
-    ticketCount,
-    html: sliced.map(item => createViewTicket(item)).join(''),
-  }
-}
-
-function createViewTicket(data) {
+// create ticket
+function createTicket(data) {
   return `
-  <div class="col-12 col-sm-6 col-md-4 card">
-    <div class="card-body">
-      <h5 class="card-title">${data.title}</h5>
-      <h6 class="card-subtitle mb-2 text-muted">User: ${data.userId}</h6>
-      <p class="card-text">Status: ${(data.completed ? "Completed" : "Open")}</p>
-    </div>
-  </div>
+    <div class="col-12 col-lg-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">${data.title}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">User: ${data.userId}</h6>
+          <p class="card-text">Status: ${(data.completed ? "Completed" : "Open")}</p>
+        </div>
+      </div>  
+    </div>  
   `
 }
 
-function createPaginations(ticketCount) {
+// create pagi button
+function createPagiBtn(pageNum) {
+  const el = $(`<li class="pagiBtn">${pageNum}</li>`);
+  
+  // ??? how to select the very child button that got pressed when ???
+  // ??? when event is bound onto parent el ???
+  // $('#viewPagi').on('click', '.pagiBtn', () => {
+  //   render(state, pageNum);
+  //   console.log(pageNum);
+  // });
+
+  // bind on-click event listener onto pagi buttons
+  el.click(() => render(state, pageNum));
+
+  return el;
+}
+
+// create pagination
+function createPagi(ticketCount, page) {
   let arrHTML = [];
-  for (let i = 1; i <= Math.ceil(ticketCount / PageViewQty); i++) {
-    arrHTML.push(createPagination(i));
+  for (let i = 1; i <= Math.ceil(ticketCount / viewQty); i++) {
+    arrHTML.push(createPagiBtn(i));
   }
-  return arrHTML
-  // return arrHTML.join('');
+  // bind class "active" onto pagi button of current page
+  arrHTML[page - 1].addClass('active');
+  return arrHTML;
 }
 
-function createPagination(pageNum) {
-  const elm = $(`<li class="pageButton">${pageNum}</li>`);
-  elm.click(() => appendTickets(sort, pageNum));
-  return elm;
+// create view
+function createView(data, state, page) {
+  const indexStart = viewQty * (page - 1);
+  const filtered = createResultByState(data, state);
+  const sliced = filtered.slice(indexStart, indexStart + viewQty);
+  const ticketCount = filtered.length;
+
+  return {
+    ticketCount,
+    HTML: sliced.map(item => createTicket(item)).join(''),
+  }
 }
 
+// ==================
+// sort method on-change event listener
+let state = '';
 
+$('#sortMethod').change(function() {
+  state = $(this).val();
 
-// ==========
-// why sometimes there's an "event" as param????
-let sort = '';
-$('#sortTickets').change(function() {
-  sort = $(this).val();
+  if (state === '') {
+    $('#view > *').remove();
+    $('#viewPagi > *').remove();
+  }
 
-  $('#tickets-area > *').remove()
-  $('#pagination-container > *').remove()
-
-  appendTickets(sort);
+  render(state);
 })
 
-$('.pageButton').click(function() {
-  let pageNum = $(this).val();
-  console.log(pageNum);
-  appendTickets(sort, pageNum);
-})
+// fetch data & render view 
+const url = "https://jsonplaceholder.typicode.com/todos";
+
+function render(state, page = 1) {
+  if (state !== "") {
+    fetch(url)
+      .then(result => {
+        return result.json();
+      })
+      .then(data => {
+        let { HTML, ticketCount } = createView(data, state, page);
+        let pagiHTML = createPagi(ticketCount, page);
+
+        $('#view').html(HTML);
+        $('#viewPagi').html(pagiHTML);        
+      })
+      .catch(() => $('#view')
+        .html('<h1 style="font-size: 100px; font-weight: 900;">超大叉燒包</h1>')
+        )
+  }
+}
