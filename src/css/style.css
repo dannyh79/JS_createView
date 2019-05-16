@@ -5,17 +5,17 @@ body { background-color: #555; }
 .wrap-select__text { text-shadow: 3px 3px #000; }
 
 .card {
-  /* background-color: #ffc; */
   background: radial-gradient(ellipse at right, #ffc 90%, #aa5);
   height: 10rem;
   margin: 10px 0;
   box-sizing: border-box;
   box-shadow: 2px 5px 5px #333; 
+  cursor: pointer;
 }
-.card:hover {
+.card.active {
   position: relative;
-  top: -10px;
-  left: -2px;
+  top: -15px;
+  left: -10px;
   cursor: pointer;
 }
 .card-title { text-transform: Capitalize; }

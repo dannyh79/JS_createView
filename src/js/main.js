@@ -22,32 +22,20 @@ function createResultByState(data, state) {
 function createTicket(data) {
   return `
     <div class="col-12 col-lg-4">
-      <div class="card">
+      <div class="card" id="ticket-${data.id}" onClick="toggleClassActive('ticket-${data.id}')">
         <div class="card-body">
           <h5 class="card-title">${data.title}</h5>
           <h6 class="card-subtitle mb-2 text-muted">User: ${data.userId}</h6>
           <p class="card-text">Status: ${(data.completed ? "Completed" : "Open")}</p>
         </div>
-      </div>  
-    </div>  
+      </div>
+    </div>
   `
 }
 
 // create pagi button
 function createPagiBtn(pageNum) {
-  const el = $(`<li class="pagiBtn">${pageNum}</li>`);
-  
-  // ??? how to select the very child button that got pressed when ???
-  // ??? when event is bound onto parent el ???
-  // $('#viewPagi').on('click', '.pagiBtn', () => {
-  //   render(state, pageNum);
-  //   console.log(pageNum);
-  // });
-
-  // bind on-click event listener onto pagi buttons
-  el.click(() => render(state, pageNum));
-
-  return el;
+  return $(`<li class="pagiBtn" onClick="render(state, ${pageNum})">${pageNum}</li>`);
 }
 
 // create pagination
@@ -75,6 +63,12 @@ function createView(data, state, page) {
 }
 
 // ==================
+// toggle class "active" onto tickets
+function toggleClassActive(id) {
+  let target = document.querySelector(`#${id}`) || null;
+  target && target.classList.toggle('active');
+}
+
 // sort method on-change event listener
 let state = '';
 
@@ -103,7 +97,7 @@ function render(state, page = 1) {
         let pagiHTML = createPagi(ticketCount, page);
 
         $('#view').html(HTML);
-        $('#viewPagi').html(pagiHTML);        
+        $('#viewPagi').html(pagiHTML);
       })
       .catch(() => $('#view')
         .html('<h1 style="font-size: 100px; font-weight: 900;">超大叉燒包</h1>')
