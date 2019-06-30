@@ -1,4 +1,6 @@
 [Page Preview on Codepen](https://codepen.io/dannyh79/pen/oRbKOQ)
 
-# JS_createView
-Practicing on rendering fetched data according to condition given
+# Ticket Board
+- A **SPA** where components are in **JavaScript** that made from scratch 
+- Data fetched via **AJAX** requests renders in “tickets” according to **state** (sort criteria)
+- Components responsive to users’ click are powered by **jQuery** syntax
